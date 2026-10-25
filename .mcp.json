@@ -1,0 +1,6 @@
+{
+  "mcpServers": {
+    "weather": { "command": ".venv/bin/python", "args": ["server.py"] },
+    "stocks": { "command": ".venv/bin/python", "args": ["stocks_server.py"] }
+  }
+}
