@@ -75,7 +75,13 @@ requirements.txt  # mcp[cli], httpx
 
 ## US Stocks News server (`stocks_server.py`)
 
-Uses the [Finnhub](https://finnhub.io) API (free tier, 60 calls/min). Get a free key at finnhub.io and keep it in an env var; never commit it.
+Uses the [Finnhub](https://finnhub.io) API (free tier, 60 calls/min). Get a free key at finnhub.io, then:
+
+```bash
+cp .env.example .env     # then edit .env and paste your key
+```
+
+`.env` is gitignored; never commit it. `.env.example` is the committed template.
 
 | Tool | Description |
 |------|-------------|
@@ -90,7 +96,7 @@ Also: resource `stocks://about` and prompt `stock_briefing(symbol)` (`/mcp__stoc
 Register it with Claude Code (use absolute paths):
 
 ```bash
-claude mcp add stocks -e FINNHUB_API_KEY=your_key_here -- /absolute/path/to/.venv/bin/python /absolute/path/to/stocks_server.py
+claude mcp add stocks -- /absolute/path/to/.venv/bin/python /absolute/path/to/stocks_server.py
 ```
 
 Try: "Any news on NVDA this week?", "Quote for TSLA", "What are analysts saying about MSFT?".

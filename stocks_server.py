@@ -5,7 +5,7 @@ Tools:    get_quote, get_company_news, get_market_news, search_symbol,
 Resource: stocks://about
 Prompt:   stock_briefing
 
-Needs a free API key from https://finnhub.io in the FINNHUB_API_KEY env var.
+Needs a free API key from https://finnhub.io in FINNHUB_API_KEY (env var or .env file).
 Transport is stdio, so NEVER print() to stdout; log to stderr.
 """
 
@@ -13,9 +13,15 @@ import logging
 import os
 import sys
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 import httpx
+from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
+
+# Load the key from a .env next to this file (gitignored), whatever the working directory.
+# Real environment variables win over .env.
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
 logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 log = logging.getLogger("stocks-mcp")
@@ -35,7 +41,7 @@ async def _get_json(path: str, params: dict | None = None):
     if not key:
         raise StocksError(
             "FINNHUB_API_KEY is not set. Get a free key at https://finnhub.io "
-            "and register the server with: claude mcp add stocks -e FINNHUB_API_KEY=<key> -- ..."
+            "and put it in a .env file next to stocks_server.py (see .env.example)."
         )
     try:
         async with httpx.AsyncClient(timeout=10) as client:
