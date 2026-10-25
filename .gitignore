@@ -3,3 +3,8 @@ __pycache__/
 *.pyc
 .claude/settings.local.json
 .env
+report.html
+htmlcov/
+.coverage
+.pytest_cache/
+assets/

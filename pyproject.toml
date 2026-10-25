@@ -3,3 +3,13 @@ name = "mcp-learn-create-tools"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=server --cov=stocks_server --cov-branch --cov-report=term-missing --html=report.html --self-contained-html"
+
+[tool.coverage.run]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "if __name__ == .__main__.:"]
