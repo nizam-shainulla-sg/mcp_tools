@@ -67,9 +67,37 @@ Rule to remember: with stdio, never `print()`: stdout carries the protocol. Log 
 ## Project layout
 
 ```
-server.py         # the MCP server (all tools, resource, prompt)
+server.py         # weather MCP server
+stocks_server.py  # US stocks news MCP server (Finnhub)
+tests/            # offline tests for the stocks server
 requirements.txt  # mcp[cli], httpx
 ```
+
+## US Stocks News server (`stocks_server.py`)
+
+Uses the [Finnhub](https://finnhub.io) API (free tier, 60 calls/min). Get a free key at finnhub.io and keep it in an env var; never commit it.
+
+| Tool | Description |
+|------|-------------|
+| `get_quote(symbol)` | Price, change %, day range |
+| `get_company_news(symbol, days=7, limit=5)` | Recent headlines with source, date, link |
+| `get_market_news(category="general", limit=5)` | Broad market news (`general`, `forex`, `crypto`, `merger`) |
+| `search_symbol(query)` | Company name to ticker |
+| `get_analyst_recommendations(symbol)` | Latest buy/hold/sell counts |
+
+Also: resource `stocks://about` and prompt `stock_briefing(symbol)` (`/mcp__stocks__stock_briefing`).
+
+Register it with Claude Code (use absolute paths):
+
+```bash
+claude mcp add stocks -e FINNHUB_API_KEY=your_key_here -- /absolute/path/to/.venv/bin/python /absolute/path/to/stocks_server.py
+```
+
+Try: "Any news on NVDA this week?", "Quote for TSLA", "What are analysts saying about MSFT?".
+
+Run the offline tests (HTTP mocked, no key needed): `python tests/test_stocks.py`
+
+Not financial advice; data may be delayed.
 
 ## Reusing for another topic
 
