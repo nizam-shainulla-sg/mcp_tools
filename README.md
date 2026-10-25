@@ -1,9 +1,13 @@
-# Weather MCP Server (learning project)
+# MCP Servers (learning project)
 
-A minimal Python MCP server using the free [Open-Meteo](https://open-meteo.com) API (no API key).
-It demonstrates all three MCP primitives (tools, resources, prompts) over stdio.
+Two minimal Python MCP servers that demonstrate all three MCP primitives (tools, resources, prompts) over stdio:
 
-## Features
+- **Weather** (`server.py`): free [Open-Meteo](https://open-meteo.com) API, no key needed.
+- **US Stocks news** (`stocks_server.py`): [Finnhub](https://finnhub.io) API, free key required.
+
+Jump to [Weather](#weather-server-serverpy), [Stocks](#us-stocks-news-server-stocks_serverpy), or [`.mcp.json`](#project-config-mcpjson).
+
+## Weather server (`server.py`)
 
 | Tool | Description |
 |------|-------------|
@@ -70,7 +74,9 @@ Rule to remember: with stdio, never `print()`: stdout carries the protocol. Log 
 server.py         # weather MCP server
 stocks_server.py  # US stocks news MCP server (Finnhub)
 tests/            # offline tests for the stocks server
-requirements.txt  # mcp[cli], httpx
+requirements.txt  # mcp[cli], httpx, python-dotenv
+.mcp.json         # project-scoped Claude Code config for both servers
+.env.example      # template for FINNHUB_API_KEY
 ```
 
 ## US Stocks News server (`stocks_server.py`)
@@ -93,17 +99,38 @@ cp .env.example .env     # then edit .env and paste your key
 
 Also: resource `stocks://about` and prompt `stock_briefing(symbol)` (`/mcp__stocks__stock_briefing`).
 
+Inspect it without Claude: `mcp dev stocks_server.py`.
+
 Register it with Claude Code (use absolute paths):
 
 ```bash
 claude mcp add stocks -- /absolute/path/to/.venv/bin/python /absolute/path/to/stocks_server.py
 ```
 
-Try: "Any news on NVDA this week?", "Quote for TSLA", "What are analysts saying about MSFT?".
+Try: "Any news on NVDA this week?", "Quote for TSLA", "What are analysts saying about MSFT?", "Find the ticker for Palantir".
+
+If `FINNHUB_API_KEY` is missing, the tools return an error asking you to set it. A real environment variable overrides `.env`.
 
 Run the offline tests (HTTP mocked, no key needed): `python tests/test_stocks.py`
 
 Not financial advice; data may be delayed.
+
+## Project config (`.mcp.json`)
+
+`.mcp.json` is committed, so anyone who clones the repo gets both servers in Claude Code without running `claude mcp add`:
+
+```json
+{
+  "mcpServers": {
+    "weather": { "command": ".venv/bin/python", "args": ["server.py"] },
+    "stocks": { "command": ".venv/bin/python", "args": ["stocks_server.py"] }
+  }
+}
+```
+
+- Paths are relative: create the `.venv` (see Setup), then run `claude` from the repo root. On Windows use `.venv\\Scripts\\python.exe` as the command.
+- It contains no secrets: the Finnhub key comes from the gitignored `.env`.
+- Claude Code asks you to approve project servers the first time; confirm with `/mcp`.
 
 ## Reusing for another topic
 
