@@ -73,7 +73,8 @@ Rule to remember: with stdio, never `print()`: stdout carries the protocol. Log 
 ```
 server.py         # weather MCP server
 stocks_server.py  # US stocks news MCP server (Finnhub)
-tests/            # offline tests for the stocks server
+tests/            # offline pytest suites for both servers
+requirements-dev.txt  # pytest, pytest-cov, pytest-html
 requirements.txt  # mcp[cli], httpx, python-dotenv
 .mcp.json         # project-scoped Claude Code config for both servers
 .env.example      # template for FINNHUB_API_KEY
@@ -111,9 +112,18 @@ Try: "Any news on NVDA this week?", "Quote for TSLA", "What are analysts saying 
 
 If `FINNHUB_API_KEY` is missing, the tools return an error asking you to set it. A real environment variable overrides `.env`.
 
-Run the offline tests (HTTP mocked, no key needed): `python tests/test_stocks.py`
-
 Not financial advice; data may be delayed.
+
+## Tests and coverage
+
+Offline tests for both servers (HTTP mocked, no API key or network needed):
+
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
+
+This prints a coverage table (line and branch) and writes `report.html` with test results plus a per-file coverage summary. `report.html` is gitignored.
 
 ## Project config (`.mcp.json`)
 
